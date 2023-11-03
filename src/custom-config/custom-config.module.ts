@@ -3,9 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 
 const envSchema = Joi.object({
-  NODE_ENV: Joi.string()
-    .valid('development', 'production', 'test')
-    .default('development'),
+  NODE_ENV: Joi.string().valid('development', 'production', 'test').default('development'),
   PORT: Joi.number().default(3000),
   DATABASE_HOST: Joi.string().required(),
   DATABASE_PORT: Joi.string().default(5432),
