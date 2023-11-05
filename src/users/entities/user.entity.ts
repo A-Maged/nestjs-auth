@@ -1,12 +1,9 @@
 import { IsEmail, Length } from 'class-validator';
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-
-enum UserRole {
-  client = 'client',
-}
+import { UserRole } from '../types';
 
 @Entity()
-export class User {
+export abstract class User {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -26,7 +23,7 @@ export class User {
   password: string;
 
   @Column({ enum: UserRole })
-  role: string;
+  role: UserRole;
 
   @Column({ default: true })
   isActive: boolean;

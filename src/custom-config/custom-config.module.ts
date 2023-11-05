@@ -10,6 +10,10 @@ const envSchema = Joi.object({
   DATABASE_USERNAME: Joi.string().required(),
   DATABASE_PASSWORD: Joi.string().required(),
   DATABASE_NAME: Joi.string().required(),
+  JWT_ACCESS_TOKEN_SECRET: Joi.string().required(),
+  JWT_ACCESS_TOKEN_EXPIRES_IN: Joi.string().required(),
+  JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
+  JWT_REFRESH_TOKEN_EXPIRES_IN: Joi.string().required(),
 });
 
 @Module({

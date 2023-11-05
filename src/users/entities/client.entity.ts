@@ -6,7 +6,8 @@ import { Photo } from './photo.entity';
 @Entity()
 export class Client extends User {
   @IsUrl()
-  @Column()
+  // @Todo: replace default url
+  @Column({ default: 'http://default-url' })
   avatar: string;
 
   @OneToMany(() => Photo, (photo) => photo.user)
