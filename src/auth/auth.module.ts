@@ -10,9 +10,22 @@ import { EmailAndPasswordPassportStrategy } from './strategies/email-and-passwor
 import { AccessTokenStrategy } from './strategies/access-token.strategy';
 import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenAuthGuard } from './guards/access-token.guard';
+import { MulterModule } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 @Module({
   imports: [
+    MulterModule.register({
+      storage: diskStorage({
+        destination: function (req, file, cb) {
+          const filepath = file.fieldname !== 'avatar' ? `uploaded/${file.fieldname}` : `public/${file.fieldname}`;
+          cb(null, filepath);
+        },
+        filename: (req, file, cb) => {
+          cb(null, file.originalname);
+        },
+      }),
+    }),
     PassportModule,
     UsersModule,
     JwtModule.registerAsync({

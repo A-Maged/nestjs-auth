@@ -9,6 +9,7 @@ import { pick } from 'pick-omit';
 import { JWTTokens } from './types';
 import { UserNotFoundException } from './exceptions/user-not-found.exception';
 import { EmailConflictException } from './exceptions/email-conflict.exception';
+import { RegisterClientDTO } from './dtos/register-client.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,17 +19,33 @@ export class AuthService {
     public jwtService: JwtService,
   ) {}
 
-  async register(createClientDTO: CreateClientDTO): Promise<JWTTokens> {
-    const foundUser = await this.clientsService.findOneByEmail(createClientDTO.email);
+  async register(
+    registerClientDTO: RegisterClientDTO,
+    files: { avatar?: Express.Multer.File[]; photos?: Express.Multer.File[] },
+  ): Promise<JWTTokens> {
+    const foundUser = await this.clientsService.findOneByEmail(registerClientDTO.email);
 
     if (foundUser) {
-      throw new EmailConflictException(createClientDTO.email);
+      throw new EmailConflictException(registerClientDTO.email);
     }
 
-    const salt = await bcrypt.genSalt();
-    const passwordHash = await bcrypt.hash(createClientDTO.password, salt);
+    const passwordHash = await this.hash(registerClientDTO.password);
 
-    const newUser = await this.clientsService.create({ ...createClientDTO, password: passwordHash });
+    const [firstName, lastName] = registerClientDTO.fullName.split(' ');
+
+    const payload: CreateClientDTO = {
+      ...registerClientDTO,
+      firstName,
+      lastName,
+      password: passwordHash,
+      avatar: files.avatar?.[0].filename,
+      photos: files.photos.map((f) => ({
+        url: f.filename,
+        name: f.filename,
+      })),
+    };
+
+    const newUser = await this.clientsService.create(payload);
 
     return this.generateAuthTokens(newUser);
   }
@@ -64,5 +81,11 @@ export class AuthService {
     ]);
 
     return { accessToken, refreshToken };
+  }
+
+  async hash(text: string) {
+    const salt = await bcrypt.genSalt();
+    const textHash = await bcrypt.hash(text, salt);
+    return textHash;
   }
 }

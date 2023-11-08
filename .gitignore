@@ -1,6 +1,12 @@
 .env
 .env.*
 
+public/avatar/*
+!public/avatar/.gitkeep
+
+uploaded/photos/*
+!uploaded/photos/.gitkeep
+
 # compiled output
 /dist
 /node_modules

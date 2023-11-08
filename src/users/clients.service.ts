@@ -4,7 +4,6 @@ import { Client } from './entities/client.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserRole } from './types';
-import { omit } from 'pick-omit';
 
 @Injectable()
 export class ClientsService {
@@ -14,12 +13,8 @@ export class ClientsService {
   ) {}
 
   async create(createClientDTO: CreateClientDTO) {
-    const [firstName, lastName] = createClientDTO.fullName.split(' ');
-
     const newClient = {
-      ...omit(createClientDTO, ['fullName']),
-      firstName,
-      lastName,
+      ...createClientDTO,
       role: UserRole.client,
     };
 

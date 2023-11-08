@@ -5,7 +5,7 @@ import { UserRole } from '../types';
 @Entity()
 export abstract class User {
   @PrimaryGeneratedColumn()
-  id: number;
+  id?: number;
 
   @Length(2, 25)
   @Column({ length: 25 })
@@ -20,17 +20,17 @@ export abstract class User {
   email: string;
 
   @Column({ type: 'text' })
-  password: string;
+  password?: string;
 
   @Column({ enum: UserRole })
   role: UserRole;
 
   @Column({ default: true })
-  isActive: boolean;
+  isActive?: boolean;
 
   @CreateDateColumn({ type: 'timestamptz' })
-  createdAt: Date;
+  createdAt?: Date;
 
   @UpdateDateColumn({ type: 'timestamptz' })
-  updatedAt: Date;
+  updatedAt?: Date;
 }

@@ -1,13 +1,10 @@
 import { IsEmail, IsOptional, IsString, IsUrl, Length, ValidateNested } from 'class-validator';
-import { Photo } from '../entities/photo.entity';
 import { Type } from 'class-transformer';
+import { Photo } from 'src/users/entities/photo.entity';
 
-export class CreateClientDTO {
+export class RegisterClientDTO {
   @Length(2, 25)
-  firstName: string;
-
-  @Length(2, 25)
-  lastName: string;
+  fullName: string;
 
   @IsEmail()
   email: string;

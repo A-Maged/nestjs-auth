@@ -1,11 +1,19 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { IsUrl } from 'class-validator';
 import { Client } from './client.entity';
 
 @Entity()
 export class Photo {
   @PrimaryGeneratedColumn()
-  id: number;
+  id?: number;
 
   @Column()
   name: string;
@@ -14,12 +22,12 @@ export class Photo {
   @Column()
   url: string;
 
-  @OneToMany(() => Client, (client) => client.photos)
-  user: Client[];
+  @ManyToOne(() => Client, (client) => client.photos)
+  client?: Client[];
 
   @CreateDateColumn({ type: 'timestamptz' })
-  createdAt: Date;
+  createdAt?: Date;
 
   @UpdateDateColumn({ type: 'timestamptz' })
-  updatedAt: Date;
+  updatedAt?: Date;
 }

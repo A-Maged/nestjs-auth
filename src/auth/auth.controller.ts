@@ -1,14 +1,13 @@
 import { Body, Controller, Post, Request, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { HttpStatus, ParseFilePipeBuilder } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CreateClientDTO } from 'src/users/dtos/create-client.dto';
 import { EmailAndPasswordGuard } from './guards/email-and-password-auth.guard';
 import { Public } from './decorators/public';
 import { JWTTokens } from './types';
 import { ImageUploadException } from './exceptions/image-upload.exception';
-
-const ONE_MEGA_BYTE_IN_BYTES = 1000000;
+import { RegisterClientDTO } from './dtos/register-client.dto';
+import { FileTypeValidationPipe } from './file-type-validation.pipe';
 
 @Controller()
 export class AuthController {
@@ -17,8 +16,8 @@ export class AuthController {
   @Public()
   @UseGuards(EmailAndPasswordGuard)
   @Post('login')
-  async login(@Request() req: Express.Request) {
-    return req.user as JWTTokens;
+  async login(@Request() req: { tokens: JWTTokens }) {
+    return req.tokens;
   }
 
   @Public()
@@ -30,18 +29,16 @@ export class AuthController {
     ]),
   )
   async register(
-    @Body() body: CreateClientDTO,
-    @UploadedFiles(
-      new ParseFilePipeBuilder().build({
-        errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-      }),
-    )
-    files: { avatar?: Express.Multer.File; photos?: Express.Multer.File[] },
+    @Body() body: RegisterClientDTO,
+    @UploadedFiles(new FileTypeValidationPipe())
+    files: { avatar?: Express.Multer.File[]; photos?: Express.Multer.File[] },
   ) {
     if (files.photos.length < 4) {
       throw new ImageUploadException();
     }
 
-    return this.authService.register(body);
+    const authTokens = await this.authService.register(body, files);
+
+    return authTokens;
   }
 }
