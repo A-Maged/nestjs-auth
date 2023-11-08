@@ -12,10 +12,23 @@ import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenAuthGuard } from './guards/access-token.guard';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { ImageMimeException } from './exceptions/image-mime.exception';
 
+const MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+const TEN_MEGA_BYTES_IN_BYTES = 10000000;
 @Module({
   imports: [
     MulterModule.register({
+      limits: {
+        fileSize: TEN_MEGA_BYTES_IN_BYTES,
+      },
+      fileFilter(req: Express.Request, file, callback) {
+        if (MIME_TYPES.includes(file.mimetype)) {
+          callback(null, true);
+        } else {
+          callback(new ImageMimeException(file.mimetype), false);
+        }
+      },
       storage: diskStorage({
         destination: function (req, file, cb) {
           const filepath = file.fieldname !== 'avatar' ? `uploaded/${file.fieldname}` : `public/${file.fieldname}`;

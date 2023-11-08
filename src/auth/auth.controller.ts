@@ -1,13 +1,21 @@
-import { Body, Controller, Post, Request, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  ParseFilePipe,
+  Post,
+  Request,
+  UploadedFiles,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CreateClientDTO } from 'src/users/dtos/create-client.dto';
 import { EmailAndPasswordGuard } from './guards/email-and-password-auth.guard';
 import { Public } from './decorators/public';
 import { JWTTokens } from './types';
-import { ImageUploadException } from './exceptions/image-upload.exception';
+import { ImageCountException } from './exceptions/image-count.exception';
 import { RegisterClientDTO } from './dtos/register-client.dto';
-import { FileTypeValidationPipe } from './file-type-validation.pipe';
 
 @Controller()
 export class AuthController {
@@ -30,11 +38,11 @@ export class AuthController {
   )
   async register(
     @Body() body: RegisterClientDTO,
-    @UploadedFiles(new FileTypeValidationPipe())
+    @UploadedFiles()
     files: { avatar?: Express.Multer.File[]; photos?: Express.Multer.File[] },
   ) {
-    if (files.photos.length < 4) {
-      throw new ImageUploadException();
+    if (files?.photos?.length < 4) {
+      throw new ImageCountException();
     }
 
     const authTokens = await this.authService.register(body, files);
