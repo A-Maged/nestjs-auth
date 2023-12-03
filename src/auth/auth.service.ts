@@ -26,17 +26,13 @@ export class AuthService {
     const foundUser = await this.clientsService.findOneByEmail(registerClientDTO.email);
 
     if (foundUser) {
-      throw new EmailConflictException(registerClientDTO.email);
+      throw new EmailConflictException(registerClientDTO.email, 'email');
     }
 
     const passwordHash = await this.hash(registerClientDTO.password);
 
-    const [firstName, lastName] = registerClientDTO.fullName.split(' ');
-
     const payload: CreateClientDTO = {
       ...registerClientDTO,
-      firstName,
-      lastName,
       password: passwordHash,
       avatar: files.avatar?.[0].filename,
       photos: files.photos?.map((f) => ({
@@ -54,7 +50,7 @@ export class AuthService {
     const client = await this.clientsService.findOneByEmail(email);
 
     if (!client) {
-      throw new UserNotFoundException(email);
+      throw new UserNotFoundException(email, 'email');
     }
 
     const isMatch = await bcrypt.compare(password, client.password);

@@ -26,7 +26,7 @@ const TEN_MEGA_BYTES_IN_BYTES = 10000000;
         if (MIME_TYPES.includes(file.mimetype)) {
           callback(null, true);
         } else {
-          callback(new ImageMimeException(file.mimetype), false);
+          callback(new ImageMimeException(file.mimetype, file.fieldname), false);
         }
       },
       storage: diskStorage({

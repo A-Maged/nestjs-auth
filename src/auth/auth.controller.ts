@@ -41,8 +41,8 @@ export class AuthController {
     @UploadedFiles()
     files: { avatar?: Express.Multer.File[]; photos?: Express.Multer.File[] },
   ) {
-    if (files?.photos?.length < 4) {
-      throw new ImageCountException();
+    if (!files?.photos?.length || files?.photos?.length < 4) {
+      throw new ImageCountException('photos');
     }
 
     const authTokens = await this.authService.register(body, files);
