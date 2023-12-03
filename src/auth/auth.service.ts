@@ -39,7 +39,7 @@ export class AuthService {
       lastName,
       password: passwordHash,
       avatar: files.avatar?.[0].filename,
-      photos: files.photos.map((f) => ({
+      photos: files.photos?.map((f) => ({
         url: f.filename,
         name: f.filename,
       })),
