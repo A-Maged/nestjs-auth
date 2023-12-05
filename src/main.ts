@@ -1,8 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
-import { BadRequestException, HttpException, HttpStatus, ValidationPipe } from '@nestjs/common';
+import { HttpException, HttpStatus, ValidationPipe } from '@nestjs/common';
 import { ApiError } from './types';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
@@ -10,6 +11,8 @@ async function bootstrap() {
   const port = configService.get('PORT');
 
   app.setGlobalPrefix('api');
+
+  app.use(cookieParser());
 
   app.useGlobalPipes(
     new ValidationPipe({
