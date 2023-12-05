@@ -56,7 +56,9 @@ export class AuthService {
     const isMatch = await bcrypt.compare(password, client.password);
 
     if (!isMatch) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException({
+        password: ['wrong password'],
+      });
     }
 
     return client;
@@ -76,7 +78,7 @@ export class AuthService {
       }),
     ]);
 
-    return { accessToken, refreshToken };
+    return { accessToken: `Bearer ${accessToken}`, refreshToken };
   }
 
   async hash(text: string) {
