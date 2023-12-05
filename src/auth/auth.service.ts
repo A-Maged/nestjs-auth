@@ -78,7 +78,7 @@ export class AuthService {
       }),
     ]);
 
-    return { accessToken: `Bearer ${accessToken}`, refreshToken };
+    return { accessToken, refreshToken };
   }
 
   async hash(text: string) {
