@@ -67,4 +67,9 @@ export class AuthController {
       })
       .send(authTokens);
   }
+
+  @Post('logout')
+  async logout(@Res({ passthrough: true }) response: Response) {
+    response.clearCookie('access_token');
+  }
 }
