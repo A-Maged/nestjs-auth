@@ -22,7 +22,9 @@ export class Photo {
   @Column()
   url: string;
 
-  @ManyToOne(() => Client, (client) => client.photos)
+  @ManyToOne(() => Client, (client) => client.photos, {
+    onDelete: 'CASCADE',
+  })
   client?: Client[];
 
   @CreateDateColumn({ type: 'timestamptz' })
