@@ -18,6 +18,7 @@ import { JWTTokens } from './types';
 import { ImageCountException } from './exceptions/image-count.exception';
 import { RegisterClientDTO } from './dtos/register-client.dto';
 import { Response } from 'express';
+import { uploadFiles, writeFileWithDirectories } from 'src/utils';
 
 @Controller()
 export class AuthController {
@@ -57,6 +58,11 @@ export class AuthController {
     }
 
     const authTokens = await this.authService.register(body, files);
+
+    uploadFiles({
+      files: [files.avatar, files.photos].flat(),
+      userIdentifier: body.email,
+    });
 
     response
       .cookie('access_token', authTokens.accessToken, {

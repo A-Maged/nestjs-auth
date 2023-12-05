@@ -11,7 +11,7 @@ import { AccessTokenStrategy } from './strategies/access-token.strategy';
 import { APP_GUARD } from '@nestjs/core';
 import { AccessTokenAuthGuard } from './guards/access-token.guard';
 import { MulterModule } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import multer, { memoryStorage } from 'multer';
 import { ImageMimeException } from './exceptions/image-mime.exception';
 
 const MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
@@ -29,15 +29,7 @@ const TEN_MEGA_BYTES_IN_BYTES = 10000000;
           callback(new ImageMimeException(file.mimetype, file.fieldname), false);
         }
       },
-      storage: diskStorage({
-        destination: function (req, file, cb) {
-          const filepath = file.fieldname !== 'avatar' ? `uploaded/${file.fieldname}` : `public/${file.fieldname}`;
-          cb(null, filepath);
-        },
-        filename: (req, file, cb) => {
-          cb(null, file.originalname);
-        },
-      }),
+      storage: memoryStorage(),
     }),
     PassportModule,
     UsersModule,

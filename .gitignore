@@ -2,11 +2,11 @@
 .env.*
 !.env.example
 
-public/avatar/*
-!public/avatar/.gitkeep
+public/*
+!public/.gitkeep
 
-uploaded/photos/*
-!uploaded/photos/.gitkeep
+uploads/*
+!uploads/.gitkeep
 
 # compiled output
 /dist
