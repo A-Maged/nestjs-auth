@@ -4,12 +4,16 @@ import { Client } from './entities/client.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserRole } from './types';
+import { Photo } from './entities/photo.entity';
 
 @Injectable()
 export class ClientsService {
   constructor(
     @InjectRepository(Client)
     private readonly clientRepository: Repository<Client>,
+
+    @InjectRepository(Photo)
+    private readonly photoRepository: Repository<Photo>,
   ) {}
 
   async create(createClientDTO: CreateClientDTO) {
@@ -23,5 +27,15 @@ export class ClientsService {
 
   async findOneByEmail(email: Client['email']) {
     return this.clientRepository.findOneBy({ email });
+  }
+
+  async getPhotosUrls(clientId: Client['id']) {
+    return this.photoRepository.find({
+      where: {
+        client: {
+          id: clientId,
+        },
+      },
+    });
   }
 }

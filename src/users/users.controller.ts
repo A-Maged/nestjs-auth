@@ -2,23 +2,32 @@ import { Controller, ForbiddenException, Get, Param, StreamableFile } from '@nes
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { User } from './entities/user.entity';
 import { createReadStream } from 'fs';
-import { join } from 'path';
 import { getUploadPath } from 'src/utils';
+import { ClientsService } from './clients.service';
+
+type GetImageParams = {
+  ownerEmail: string;
+  fileCategory: string;
+  fileName: string;
+};
 
 @Controller('users')
 export class UsersController {
+  constructor(private readonly clientService: ClientsService) {}
+
   @Get('/profile')
   async profile(@CurrentUser() user: User) {
     return user;
   }
 
-  @Get('/images/:ownerEmail/:fileName')
-  getFile(
-    @CurrentUser() user: User,
-    @Param('ownerEmail') ownerEmail: string,
-    @Param('fileName') fileName: string,
-  ): StreamableFile {
-    if (ownerEmail !== user.email) {
+  @Get('/photos')
+  async photos(@CurrentUser() user: User) {
+    return this.clientService.getPhotosUrls(user.id);
+  }
+
+  @Get('/images/:ownerEmail/:fileCategory/:fileName')
+  getImage(@CurrentUser() user: User, @Param() params: GetImageParams): StreamableFile {
+    if (params.ownerEmail !== user.email) {
       throw new ForbiddenException({
         error: 'You do not have permission to access this resource',
       });
@@ -26,11 +35,11 @@ export class UsersController {
 
     const filePath = getUploadPath({
       userIdentifier: user.email,
-      fileDir: ownerEmail,
-      fileName,
+      fileDir: params.fileCategory,
+      fileName: params.fileName,
     });
 
-    const file = createReadStream(join(process.cwd(), filePath));
+    const file = createReadStream(filePath);
 
     return new StreamableFile(file);
   }
