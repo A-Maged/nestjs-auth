@@ -1,4 +1,15 @@
-import { Body, Controller, Post, Req, Res, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+  UploadedFiles,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { EmailAndPasswordGuard } from './guards/email-and-password-auth.guard';
@@ -15,6 +26,7 @@ export class AuthController {
   @Public()
   @UseGuards(EmailAndPasswordGuard)
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   async login(@Req() req: { tokens: JWTTokens }, @Res({ passthrough: true }) response: Response) {
     response
       .cookie('access_token', req.tokens.accessToken, {
