@@ -34,10 +34,10 @@ export class AuthService {
     const payload: CreateClientDTO = {
       ...registerClientDTO,
       password: passwordHash,
-      avatar: files.avatar?.[0].filename,
+      avatar: files.avatar?.[0].originalname,
       photos: files.photos?.map((f) => ({
-        url: f.filename,
-        name: f.filename,
+        url: f.originalname,
+        name: f.originalname,
       })),
     };
 
@@ -65,7 +65,7 @@ export class AuthService {
   }
 
   async generateAuthTokens(user: Client): Promise<JWTTokens> {
-    const payload = pick(user, ['firstName', 'lastName', 'email', 'role']);
+    const payload = pick(user, ['firstName', 'lastName', 'email', 'role', 'avatar']);
 
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
