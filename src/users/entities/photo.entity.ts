@@ -24,6 +24,7 @@ export class Photo {
 
   @ManyToOne(() => Client, (client) => client.photos, {
     onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   client?: Client[];
 
