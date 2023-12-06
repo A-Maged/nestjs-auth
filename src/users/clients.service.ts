@@ -30,6 +30,10 @@ export class ClientsService {
   }
 
   async getPhotosUrls(clientId: Client['id']) {
+    if (!clientId) {
+      throw new Error('clientId is required');
+    }
+
     return this.photoRepository.find({
       where: {
         client: {

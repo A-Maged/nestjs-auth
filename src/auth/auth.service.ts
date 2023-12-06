@@ -65,7 +65,7 @@ export class AuthService {
   }
 
   async generateAuthTokens(user: Client): Promise<JWTTokens> {
-    const payload = pick(user, ['firstName', 'lastName', 'email', 'role', 'avatar']);
+    const payload = pick(user, ['id', 'firstName', 'lastName', 'email', 'role', 'avatar']);
 
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(payload, {
