@@ -46,3 +46,9 @@ export function writeFileWithDirectories(filePath: string, content: Buffer) {
 export function makeSafeFolderName(str: string): string {
   return str.replace(/[\/\\?%*:|"<>]/g, '-');
 }
+
+const ALLOWED_IMG_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+
+export function validateImageMimeType(file?: Express.Multer.File) {
+  return !ALLOWED_IMG_MIME_TYPES.includes(file.mimetype);
+}

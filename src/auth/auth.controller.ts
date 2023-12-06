@@ -18,7 +18,8 @@ import { JWTTokens } from './types';
 import { ImageCountException } from './exceptions/image-count.exception';
 import { RegisterClientDTO } from './dtos/register-client.dto';
 import { Response } from 'express';
-import { uploadFiles, writeFileWithDirectories } from 'src/utils';
+import { uploadFiles, validateImageMimeType, writeFileWithDirectories } from 'src/utils';
+import { ImageMimeException } from './exceptions/image-mime.exception';
 
 @Controller()
 export class AuthController {
@@ -53,6 +54,12 @@ export class AuthController {
     files: { avatar?: Express.Multer.File[]; photos?: Express.Multer.File[] },
     @Res({ passthrough: true }) response: Response,
   ) {
+    const uploadFileWithWrongType = [files?.photos, files.avatar].flat()?.find(validateImageMimeType);
+
+    if (uploadFileWithWrongType) {
+      throw new ImageMimeException(uploadFileWithWrongType.mimetype, uploadFileWithWrongType.fieldname);
+    }
+
     if (!files?.photos?.length || files?.photos?.length < 4) {
       throw new ImageCountException(4, 'photos');
     }

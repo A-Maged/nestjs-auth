@@ -22,13 +22,6 @@ const TEN_MEGA_BYTES_IN_BYTES = 10000000;
       limits: {
         fileSize: TEN_MEGA_BYTES_IN_BYTES,
       },
-      fileFilter(req: Express.Request, file, callback) {
-        if (MIME_TYPES.includes(file.mimetype)) {
-          callback(null, true);
-        } else {
-          callback(new ImageMimeException(file.mimetype, file.fieldname), false);
-        }
-      },
       storage: memoryStorage(),
     }),
     PassportModule,
